@@ -1,0 +1,15 @@
+---
+aws_access_key: dummy
+aws_secret_key: dummy
+aws_acct_vpc_id: vpc-dummy
+security_group: prai-group
+ec2_instance_type: t2.micro
+ec2_quantity: 1
+aws_region: "us-east-2"
+aws_vpc_subnet: subnet-*******7
+aws_image: ami-b20b21d7
+aws_keypair: dummy-key-pair
+ec2_instance_tag: '{"Name":"{{ app_name }}_{{ server_env }}_","Group1":"{{ app_name }}_{{ server_env }}","Group2":"{{ app_name }}_{{ server_env }}_"}'
+app_name: prai
+server_env: test
+

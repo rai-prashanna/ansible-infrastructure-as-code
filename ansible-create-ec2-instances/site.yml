@@ -1,0 +1,16 @@
+---
+- name: mongodb 3.6 setup in amazon ami 
+  hosts: localhost
+  vars:
+     ansible_ssh_private_key_file: "/home/ansible/.ssh/fuse-code-challenge-key-pair.pem"
+  vars_files:
+    - vars/main.yml
+  roles:
+     - mongodb
+
+  
+- name: git in amazon ami 
+  hosts: aws
+  roles:
+     - git     
+   

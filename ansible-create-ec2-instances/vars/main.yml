@@ -12,4 +12,8 @@ aws_keypair: dummy-key-pair
 ec2_instance_tag: '{"Name":"{{ app_name }}_{{ server_env }}_","Group1":"{{ app_name }}_{{ server_env }}","Group2":"{{ app_name }}_{{ server_env }}_"}'
 app_name: prai
 server_env: test
+download_name : 'apache-flume-{{ version }}-bin.tar.gz'
+download_path : '{{ mirror_url }}/{{ version }}/{{download_name}}'
+
+
 

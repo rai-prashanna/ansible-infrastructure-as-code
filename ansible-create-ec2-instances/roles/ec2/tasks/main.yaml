@@ -1,0 +1,98 @@
+---
+
+  - name: create ec2 instances as defined in ec2_quantity
+    local_action:
+     module: ec2
+     image: "{{ aws_image }}"
+     instance_type: "{{ ec2_instance_type }}"
+     aws_access_key: "{{ aws_access_key }}"
+     aws_secret_key: "{{ aws_secret_key }}"
+     keypair: "{{ aws_keypair }}"
+     count: "{{ ec2_quantity }}"
+     instance_tags: "{{ ec2_instance_tag }}"
+     region: "{{ aws_region }}"
+     group: "{{ security_group }}"
+     vpc_subnet_id: "{{ aws_vpc_subnet }}"
+     wait: true
+    register: ec2_info
+    
+  - debug: var=ec2_info
+  - debug: var=item
+    with_items: ec2_info.instance_ids   
+   
+  - name: Add marker to /etc/ansible/hosts for elasticsearch node
+    become: true
+    blockinfile:
+      dest: /etc/ansible/hosts 
+      marker: ""
+      insertafter: "EOF"
+      content: |
+       [elasticsearch]
+  - name: Add mappings of ip to /etc/ansible/hosts for elasticsearch node
+    become: true
+    blockinfile:
+      dest: /etc/ansible/hosts 
+      marker: ""
+      insertafter: "EOF"
+      content: |
+       {{ item.1.public_ip }} ansible_ssh_private_key_file=~/.ssh/fuse-code-challenge-key-pair.pem ansible_ssh_user=ec2-user
+    with_indexed_items: ec2_info.instances
+    when: item.0 == 0  
+  
+  - name: Add marker to /etc/ansible/hosts for flume node
+    become: true
+    blockinfile:
+      dest: /etc/ansible/hosts 
+      marker: ""
+      insertafter: "EOF"
+      content: |
+       [flume]
+       
+  - name: Add mappings to /etc/ansible/hosts for flume node
+    become: true
+    blockinfile:
+      dest: /etc/ansible/hosts 
+      marker: ""
+      insertafter: "EOF"
+      content: |
+       {{ item.1.public_ip }} ansible_ssh_private_key_file=~/.ssh/fuse-code-challenge-key-pair.pem ansible_ssh_user=ec2-user
+    with_indexed_items: ec2_info.instances  
+    when: item.0 == 1  
+  
+  - add_host: hostname={{ item.public_ip }} groupname={{ app_name }}_{{ server_env }}
+    with_items: ec2_info.instances     
+    
+  - name: Add marker to /etc/ansible/hosts for kafka node
+    become: true
+    blockinfile:
+      dest: /etc/ansible/hosts 
+      marker: ""
+      insertafter: "EOF"
+      content: |
+       [kafka]
+       
+  - name: Add mappings to /etc/ansible/hosts for kafka node
+    become: true
+    blockinfile:
+      dest: /etc/ansible/hosts 
+      marker: ""
+      insertafter: "EOF"
+      content: |
+       {{ item.1.public_ip }} ansible_ssh_private_key_file=~/.ssh/fuse-code-challenge-key-pair.pem ansible_ssh_user=ec2-user
+    with_indexed_items: ec2_info.instances  
+    when: item.0 == 2  
+  
+  - name: pause
+    pause:
+     minutes: 3  
+  
+  - name: checking for ssh connections in port 22 
+    wait_for:
+     state: started
+     host: "{{ item.public_ip }}"
+     port: 22
+    with_items: ec2_info.instances
+  
+  - name: Refresh inventory to ensure new instaces exist in inventory
+    meta: refresh_inventory
+

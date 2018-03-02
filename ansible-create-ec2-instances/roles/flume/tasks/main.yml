@@ -5,6 +5,7 @@
     creates: "{{installation_path}}/apache-flume-{{ version }}-bin/bin/flume-ng"
     src: "{{download_path}}"
     dest: "{{installation_path}}"
+    copy: no
     remote_src: True
 
 - name: Configure Apache Flume

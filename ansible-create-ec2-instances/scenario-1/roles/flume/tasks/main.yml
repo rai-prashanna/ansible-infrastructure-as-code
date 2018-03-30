@@ -1,0 +1,89 @@
+---
+
+  - debug: var="{{ flume_public_ip }}" 
+  
+  - debug: var="{{ kafka_public_ip }}"
+  
+  - debug: var="{{ elasticsearch_public_ip }}"   
+
+
+#- name: Download and Uncompress Apache Flume
+#  become: yes
+#  unarchive:
+#    creates: "{{installation_path}}/apache-flume-{{ version }}-bin/bin/flume-ng"
+#    src: "{{download_path}}"
+#    dest: "{{installation_path}}"
+#    remote_src: True
+#
+#- name: Configure Apache Flume
+#  become: yes
+#  template:
+#    src: flume-conf.properties.j2
+#    dest: "{{ installation_path }}/apache-flume-{{ version }}-bin/conf/flume-conf.properties"
+#    owner: "{{owner}}"
+#    group: "{{group}}"
+#    mode: 0644
+#    force: yes
+##  notify:
+##    - Restart Apache Flume
+##  when: apache_flume_config is not defined
+#
+#- name: Copy Apache Flume Config File
+#  become: yes
+#  template:
+#    src: flume-conf.properties.j2
+#    dest: "{{ installation_path }}/apache-flume-{{ version }}-bin/conf/flume-conf.properties"
+#    owner: "{{owner}}"
+#    group: "{{group}}"
+#    mode: 0644
+#    force: yes
+#
+#- name: Flume enviroment variable template
+#  become: yes
+#  template:
+#    src: flume-env.sh.j2
+#    dest: "{{ installation_path }}/apache-flume-{{ version }}-bin/conf/flume-env.sh"
+#    owner: "{{owner}}"
+#    group: "{{group}}"
+#    force: yes
+##  notify:
+##    - Restart Apache Flume
+#
+#- name: Change Permissions And Create softlink
+#  become: yes
+#  file:
+#    path: "{{ installation_path }}/apache-flume-{{ version }}-bin"
+#    src: "{{ installation_path }}/apache-flume-{{ version }}-bin"
+#    dest: "{{ installation_path }}/flume"
+#    state: link
+#    force: yes
+#    owner: "{{owner}}"
+#
+##- name: Create Flume Service
+##  become: yes
+##  template:
+##    src: apache-flume.service.j2
+##    dest: "/etc/systemd/system/apache-flume.service"
+##    owner: "{{owner}}"
+##    group: "{{group}}"
+##    force: yes
+##
+#
+#- name: Download and Uncompress Elasticsearch-1.7.0
+#  become: yes
+#  unarchive:
+#    src: "{{download_link_elasticsearch}}"
+#    dest: /tmp
+#    remote_src: True
+#
+#- name: copy lucence + elasticsearch jar into lib folder of apache flume
+#  become: yes
+#  command: cp -b /tmp/elasticsearch-1.7.0/lib/{{ item }} {{ installation_path }}/apache-flume-{{ version }}-bin/lib
+#  with_items:
+#   - "lucene-core-4.10.4.jar"
+#   - "elasticsearch-1.7.0.jar"
+#   
+#- name: Run flume in remote shell
+#  shell: nohup /usr/local/flume/bin/flume-ng agent --conf conf --conf-file /usr/local/flume/conf/flume-conf.properties --name a1 -Dflume.root.logger=INFO,console </dev/null >/dev/null 2>&1 & 
+#  
+#

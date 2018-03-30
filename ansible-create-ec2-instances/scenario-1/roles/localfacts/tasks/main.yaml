@@ -1,0 +1,27 @@
+---
+
+#- name: gather facts from localhost 
+#  become: yes
+#  gather_facts: False
+#  setup:
+#  delegate_to: 18.217.184.123
+#  delegate_facts: True
+
+
+
+
+#- setup:
+#  hosts: localhost
+#  delegate_to: "{{item}}"
+#  with_items: "{{groups['all']}}"
+#  when: item != "localhost"
+
+#- debug: var={{ kafka_public_ip }}   
+#  with_items: "{{groups['all']}}"
+
+#- set_fact:
+#    kafkaip: 12.13.24.24
+#  delegate_to: "{{ item }}"
+#  delegate_facts: True
+#  with_items: "{{ groups['all'] }}"
+#  when: item != "localhost"

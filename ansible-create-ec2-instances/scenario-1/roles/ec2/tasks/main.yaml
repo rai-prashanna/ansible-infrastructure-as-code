@@ -1,0 +1,139 @@
+---
+
+#  - name: create ec2 instances as defined in ec2_quantity
+#    local_action:
+#     module: ec2
+#     image: "{{ aws_image }}"
+#     instance_type: "{{ ec2_instance_type }}"
+#     aws_access_key: "{{ aws_access_key }}"
+#     aws_secret_key: "{{ aws_secret_key }}"
+#     keypair: "{{ aws_keypair }}"
+#     count: 1
+#     instance_tags: '{"Name":"{{ app_name }}_{{ server_env }}_1_{{ item }}_{{ ansible_date_time.date }}_{{ ansible_date_time.iso8601 }}","Group1":"{{ app_name }}_{{ server_env }}_1_{{ item }}_{{ ansible_date_time.date }}_{{ ansible_date_time.iso8601 }}","Group2":"{{ app_name }}_{{ server_env }}_1_{{ item }}_{{ ansible_date_time.date }}_{{ ansible_date_time.iso8601 }}"}'
+#     region: "{{ aws_region }}"
+#     group: "{{ security_group }}"
+#     vpc_subnet_id: "{{ aws_vpc_subnet }}"
+#     assign_public_ip: yes
+#     wait: true
+#    register: ec2_info 
+#    with_items: "{{ node_name }}"
+#
+#  - name: pause
+#    pause:
+#     minutes: 3
+#    
+#  - name: checking all items
+#    debug:
+#     msg: "{{ item.instances.0.tags.Name }}"
+#    with_items: "{{ ec2_info.results }}"
+#
+#  - add_host: hostname={{ item.instances.0.public_ip }} groupname={{ item.instances.0.tags.Name }}
+#    with_items: "{{ ec2_info.results }}"
+#
+#  - name: checking for ssh connections in port 22
+#    wait_for:
+#     state: started
+#     host: "{{ item.instances.0.public_ip }}"
+#     port: 22
+#    with_items: "{{ ec2_info.results }}"
+#
+#  - set_fact: 
+#     "{{ item.1 }}_public_ip": "{{ item.0.instances.0.public_ip }}"
+#     "{{ item.1 }}_private_ip": "{{ item.0.instances.0.private_ip }}"
+#     "{{ item.1 }}_device_id": "{{ item.0.instances.0.id }}"
+#    with_together: 
+#     - "{{ ec2_info.results }}"
+#     - "{{ node_name }}"
+#    delegate_to: 127.0.0.1
+#    delegate_facts: True
+#
+#  - name: Refresh inventory to ensure new instaces exist in inventory
+#    meta: refresh_inventory
+       
+  - name: 'ensure {{inventory_file}} exists'
+    file:
+        path: '{{inventory_file}}'
+        state: directory
+        mode: 0777
+
+  - name: create empty inventory file
+    become: yes
+    copy:
+        content: "## this is ansible inventory file "
+        dest: "{{inventory_file}}/hosts"
+        force: yes
+        owner: "{{ lookup('env', 'USER') }}"
+        mode: 0777
+        backup: yes
+        
+  - debug: msg="{{ lookup('env','USER') }} is an environment variable"
+        
+  - name: Add empty marker to /etc/ansible/hosts 
+    become: yes
+    blockinfile:
+      dest: /etc/ansible/hosts
+      marker: ""
+      insertbefore: "BOF"
+      content: |
+       
+  - name: Add marker to /etc/ansible/hosts for all node
+    become: yes
+    blockinfile:
+      dest: /etc/ansible/hosts
+      marker: ""
+      insertbefore: "EOF"
+      content: |
+       [{{item.1}}]
+       {{item.0.instances.0.public_ip}} ansible_ssh_private_key_file={{ ansible_ssh_pem_file_path }} ansible_ssh_user={{ ansible_ssh_username }}
+    with_together: 
+     - "{{ ec2_info.results }}"
+     - "{{ node_name }}"
+
+#  - name: Add details to /etc/ansible/hosts for kafka node
+#    become: true
+#    blockinfile:
+#      dest: /etc/ansible/hosts
+#      marker: ""
+#      insertbefore: "EOF"
+#      content: |
+#       [ kafka ]
+#       {{ kafka_elastic_ip }} ansible_ssh_private_key_file={{ ansible_ssh_pem_file_path }} ansible_ssh_user={{ ansible_ssh_username }}   
+#
+#  - name: associate an elastic IP with an KAFKA instance
+#    ec2_eip:
+#      aws_access_key: "{{ aws_access_key }}"
+#      aws_secret_key: "{{ aws_secret_key }}"
+#      device_id: "{{ item.1.id }}"
+#      public_ip: "{{ kafka_elastic_ip }}"
+#      region: us-east-2
+#      in_vpc: yes
+#    with_indexed_items: "{{ ec2_info.instances }}"
+#    when: item.0 == 2
+
+  - name: debug all items
+    debug: 
+     msg: "{{ hostvars[inventory_hostname][item+'_public_ip' ]}}"
+    with_items: "{{ node_name }}"
+    
+  - set_fact: 
+     kafka_public_ip: "{{ hostvars[inventory_hostname]['kafka_public_ip']}}"
+     kafka_private_ip: "{{ hostvars[inventory_hostname]['kafka_private_ip']}}"
+     kafka_device_id: "{{ hostvars[inventory_hostname]['kafka_device_id']}}"
+     flume_public_ip: "{{ hostvars[inventory_hostname]['flume_public_ip']}}"
+     flume_private_ip: "{{ hostvars[inventory_hostname]['flume_private_ip']}}"
+     flume_device_id: "{{ hostvars[inventory_hostname]['flume_device_id']}}"
+     elasticsearch_public_ip: "{{ hostvars[inventory_hostname]['elasticsearch_public_ip']}}"
+     elasticsearch_private_ip: "{{ hostvars[inventory_hostname]['elasticsearch_private_ip']}}"
+     elasticsearch_device_id: "{{ hostvars[inventory_hostname]['elasticsearch_device_id']}}"
+    delegate_to: item
+    delegate_facts: True 
+    with_items: "{{ groups['all'] }}"
+
+  - name: delete known host for ssh connections
+    local_action:
+     module: file
+     path: ~/.ssh/known_hosts
+     state: absent
+
+  - name: Refresh inventory to ensure new instaces exist in inventory
+    meta: refresh_inventory

@@ -1,0 +1,35 @@
+---
+aws_access_key: AKIA**********
+aws_secret_key: W***************
+aws_acct_vpc_id: vpc-*******
+security_group: *******-group
+ec2_instance_type: t2.medium
+ec2_quantity: 3
+aws_region: "us-east-2"
+aws_vpc_subnet: subnet-*******
+aws_image: ami-b20b21d7
+aws_keypair: prai-automate
+ec2_instance_tag: '{"Name":"{{ app_name }}_{{ server_env }}_","Group1":"{{ app_name }}_{{ server_env }}","Group2":"{{ app_name }}_{{ server_env }}_"}'
+app_name: prai
+server_env: automate
+ansible_ssh_pem_file_path: ~/.ssh/{{ aws_keypair }}.pem
+ansible_ssh_username: ec2-user
+interset_java_key_pair_path: ~/.ssh/******-app-dev.pem
+interset_java_ssh_user: ec2-user
+node_name:
+ - kafka
+ - flume
+ - elasticsearch
+ip:
+ - 18.219.251.167
+ - 18.188.191.121
+ #- 15.11.12.13
+names:
+ - elasticsearch-test
+ - kafka-test
+ - flume-test 
+ 
+kafka_elastic_ip: 0.0.0.0
+ 
+
+

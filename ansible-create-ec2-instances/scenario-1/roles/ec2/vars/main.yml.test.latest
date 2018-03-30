@@ -1,0 +1,40 @@
+---
+
+aws_access_key: AKIAIZAUVE5NCZZQLO2Q
+aws_secret_key: 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
+aws_acct_vpc_id: vpc-045aee6c
+aws_access_key: AKIAJFA3SWA4ZJKCD4XA
+aws_secret_key: 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
+aws_acct_vpc_id: vpc-62b4080a
+security_group: interset-automate-sg-dev
+ec2_instance_type: t2.medium
+ec2_quantity: 3
+ec2_volume_size: 8
+aws_region: "us-east-2"
+aws_vpc_subnet: subnet-fce75894
+aws_image: ami-b20b21d7
+aws_keypair: interset-automate-dev
+ec2_instance_tag: '{"Name":"{{ app_name }}_{{ server_env }}_1","Group1":"{{ app_name }}_{{ server_env }}_1","Group2":"{{ app_name }}_{{ server_env }}_1"}'
+app_name: interset
+server_env: automate
+download_name : 'apache-flume-{{ version }}-bin.tar.gz'
+download_path : '{{ mirror_url }}/{{ version }}/{{download_name}}'
+ansible_ssh_pem_file_path: ~/.ssh/{{ aws_keypair }}.pem
+ansible_ssh_username: ec2-user
+interset_java_key_pair_path: ~/.ssh/interset-app-dev.pem
+interset_java_public_ip: 18.221.139.240
+interset_java_ssh_user: ec2-user
+node_name:
+ - kafka
+ - flume
+ip:
+ - 10.11.12.13
+ - 14.11.12.13
+names:
+ - elasticsearch-test
+ - kafka-test
+ - flume-test 
+ 
+kafka_elastic_ip: 18.219.131.69
+ 
+

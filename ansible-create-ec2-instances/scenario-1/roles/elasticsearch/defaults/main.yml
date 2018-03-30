@@ -1,0 +1,8 @@
+---
+elasticsearch_network_host: localhost
+elasticsearch_http_port: 9200
+elasticsearch_script_inline: true
+elasticsearch_script_indexed: true
+download_link_elasticsearch: https://download.elastic.co/elasticsearch/elasticsearch/elasticsearch-1.7.0.tar.gz 
+owner: ec2-user
+group: ec2-user

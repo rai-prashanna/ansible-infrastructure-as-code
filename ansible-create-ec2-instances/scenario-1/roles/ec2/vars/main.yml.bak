@@ -1,0 +1,19 @@
+---
+aws_access_key: AKIAIZAUVE5NCZZQLO2Q
+aws_secret_key: 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
+aws_acct_vpc_id: vpc-045aee6c
+security_group: prai-group
+ec2_instance_type: t2.medium
+ec2_quantity: 3
+aws_region: "us-east-2"
+aws_vpc_subnet: subnet-1d99ad57
+aws_image: ami-b20b21d7
+aws_keypair: interset-automate
+ec2_instance_tag: '{"Name":"{{ app_name }}_{{ server_env }}_","Group1":"{{ app_name }}_{{ server_env }}","Group2":"{{ app_name }}_{{ server_env }}_"}'
+app_name: interset
+server_env: automate
+ansible_ssh_pem_file_path: ~/.ssh/{{ aws_keypair }}.pem
+ansible_ssh_username: ec2-user
+interset_java_key_pair_path: ~/.ssh/interset-app-dev.pem
+interset_java_public_ip: 18.221.139.240
+interset_java_ssh_user: ec2-user

@@ -1,0 +1,217 @@
+  - set_fact: 
+     "{{ item.1 }}_public_ip": "{{ item.0 }}"
+#     "{{ item.1 }}_private_ip": "{{ item.0.instances.0.private_ip }}"
+#     "{{ item.1 }}_device_id": "{{ item.0.instances.0.id }}"
+    with_together: 
+     - "{{ ip }}"
+     - "{{ node_name }}"
+    delegate_to: 127.0.0.1
+    delegate_facts: True    
+
+  - debug: var="{{ kafka_public_ip }}"
+#  - debug: var="{{ kafka_private_ip }}"
+#  - debug: var="{{ kafka_device_id }}"
+  
+  - debug: var="{{ flume_public_ip }}"
+#  - debug: var="{{ flume_private_ip }}"
+#  - debug: var="{{ flume_device_id }}"
+  
+  - debug: var="{{ elasticsearch_public_ip }}"
+#  - debug: var="{{ elasticsearch_private_ip }}"
+#  - debug: var="{{ elasticsearch_device_id }}"
+
+  - name: Refresh inventory to ensure new instaces exist in inventory
+    meta: refresh_inventory
+
+  - name: debug all items
+    debug: 
+     msg: "{{ hostvars[inventory_hostname][item+'_public_ip' ]}}"
+    with_items: "{{ node_name }}"
+  
+  
+#  hostvars[inventory_hostname]['%s' | format(item.stdout)]    
+    
+     
+
+#  - name: gather facts from localhost 
+#    hosts: localhost
+#    setup:
+#    delegate_to: "{{item}}"
+#    delegate_facts: True
+#    with_items: "{{groups['all']}}"
+    
+#  - name: 'ensure {{inventory_file}} exists'
+#    become: yes
+#    file:
+#        path: '{{inventory_file}}'
+#        state: directory
+#        mode: 0777
+#
+#  - name: create empty inventory file
+#    copy:
+#        content: "## this is ansible inventory file "
+#        dest: "{{inventory_file}}/hosts"
+#        force: yes
+#        owner: "{{ lookup('env', 'USER') }}"
+#        mode: 0777
+#        backup: yes
+#        
+#  - name: Add empty marker to /etc/ansible/hosts 
+#    become: true
+#    blockinfile:
+#      dest: /etc/ansible/hosts
+#      marker: ""
+#      insertbefore: "BOF"
+#      content: |
+#       
+#  - name: Add marker to /etc/ansible/hosts for all node
+#    become: true
+#    blockinfile:
+#      dest: /etc/ansible/hosts
+#      marker: ""
+#      insertbefore: "EOF"
+#      content: |
+#       [{{ item.1 }}]
+#       10.0.2.3 ansible_ssh_private_key_file={{ ansible_ssh_pem_file_path }} ansible_ssh_user={{ ansible_ssh_username }}
+#    with_together: 
+#     - "{{ ip }}"
+#     - "{{ node_name }}"
+#
+#  - name: Add details to /etc/ansible/hosts for kafka node
+#    become: true
+#    blockinfile:
+#      dest: /etc/ansible/hosts
+#      marker: ""
+#      insertbefore: "EOF"
+#      content: |
+#       [ kafka ]
+#       {{ kafka_elastic_ip }} ansible_ssh_private_key_file={{ ansible_ssh_pem_file_path }} ansible_ssh_user={{ ansible_ssh_username }}   
+#
+#  - name: associate an elastic IP with an KAFKA instance
+#    ec2_eip:
+#      aws_access_key: "{{ aws_access_key }}"
+#      aws_secret_key: "{{ aws_secret_key }}"
+#      device_id: "{{ item.1.id }}"
+#      public_ip: "{{ kafka_elastic_ip }}"
+#      region: us-east-2
+#      in_vpc: yes
+#    with_indexed_items: "{{ ec2_info.instances }}"
+#    when: item.0 == 2
+#
+#  - name: delete known host for ssh connections
+#    local_action:
+#     module: file
+#     path: ~/.ssh/known_hosts
+#     state: absent
+#
+#  - name: Refresh inventory to ensure new instaces exist in inventory
+#    meta: refresh_inventory
+#
+#  - name: gather facts from localhost
+#    local_action:
+#     module: setup     
+#     delegate_to: "{{item}}"
+#     delegate_facts: True
+#     with_items: "{{groups['all']}}"
+
+
+### testing
+##  - set_fact: 
+##     "{{ item.1 }}_public_ip": "{{ item.0 }}"
+##    with_together: 
+##     - "{{ ip }}"
+##     - "{{ node_name }}"
+##
+##  - shell: "echo {{ item }}_public_ip"
+##    register: info
+##    with_items: 
+##     - "{{ node_name }}"
+##     
+###  - debug: var=info       
+##
+#  - debug: msg=" {{ item.0 }}  {{ item.1 }}  {{ item.2 }} "      
+#    with_items: 
+#         - "{{ node_name }}"
+#         - "{{ ip }}"
+#         - "{{ names }}"
+##     
+##  - debug: msg="{{ hostvars[inventory_hostname]['%s' | format(item.stdout)] }}"     
+##    with_items: 
+##     - "{{ info.results }}"     
+##  - debug:
+##     var: " {{ item }}_public_ip "
+##    with_items:
+##     - "{{ node_name }}" 
+#
+#  - name: checking all items
+#    debug:
+#     msg: "{{ item.instances.0.public_ip }}"
+#    with_items: "{{ ec2_info.results }}"
+#
+#  - add_host: hostname={{ item.instances.0.public_ip }} groupname={{ app_name }}_{{ server_env }}
+#    with_items: "{{ ec2_info.results }}"
+#
+#  - name: checking for ssh connections in port 22
+#    wait_for:
+#     state: started
+#     host: "{{ item.instances.0.public_ip }}"
+#     port: 22
+#     msg: failed to do ssh testing due to delay of ec2 init
+#    with_items: "{{ ec2_info.results }}"
+
+
+
+###testing
+
+
+
+
+#testing2
+  - set_fact: 
+     "{{ item.1 }}_public_ip": "{{ item.0 }}"
+#     "{{ item.1 }}_private_ip": "{{ item.0.instances.0.private_ip }}"
+#     "{{ item.1 }}_device_id": "{{ item.0.instances.0.id }}"
+    with_together: 
+     - "{{ ip }}"
+     - "{{ node_name }}"
+    delegate_to: 127.0.0.1
+    delegate_facts: True    
+
+#  - debug: var="{{ kafka_public_ip }}"
+#  - debug: var="{{ kafka_private_ip }}"
+#  - debug: var="{{ kafka_device_id }}"
+  
+#  - debug: var="{{ flume_public_ip }}"
+#  - debug: var="{{ flume_private_ip }}"
+#  - debug: var="{{ flume_device_id }}"
+  
+#  - debug: var="{{ elasticsearch_public_ip }}"
+#  - debug: var="{{ elasticsearch_private_ip }}"
+#  - debug: var="{{ elasticsearch_device_id }}"
+
+  - name: Refresh inventory to ensure new instaces exist in inventory
+    meta: refresh_inventory
+
+  - name: debug all items
+    debug: 
+     msg: "{{ hostvars[inventory_hostname][item+'_public_ip' ]}}"
+    with_items: "{{ node_name }}"
+    
+  - name: debug all host
+    debug: 
+     msg: "{{ item }}"
+    with_items: "{{groups['all']}}"    
+
+  - set_fact: 
+     "{{ item }}_public_ip": "{{ hostvars[inventory_hostname][item+'_public_ip' ]}}"
+    delegate_to: 18.219.251.167
+    delegate_facts: True 
+    with_items: "{{ node_name }}" 
+    
+    
+  - set_fact: 
+     "{{ item }}_public_ip": "{{ hostvars[inventory_hostname][item+'_public_ip' ]}}"
+    delegate_to: "{{ hostvars[inventory_hostname][item+'_public_ip' ]}}"
+    delegate_facts: True 
+    with_items: "{{ node_name }}"     
+    

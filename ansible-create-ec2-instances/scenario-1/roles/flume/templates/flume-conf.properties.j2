@@ -1,0 +1,26 @@
+a1.sources = r1
+a1.sinks = k1
+a1.channels = c1
+
+# Describe/configure the source
+a1.sources.r1.type = org.apache.flume.source.kafka.KafkaSource
+a1.sources.r1.kafka.bootstrap.servers = 10.0.0.141:9092
+a1.sources.r1.kafka.topics = test
+a1.sources.r1.kafka.consumer.group.id = custom.g.id
+# Describe the sink
+a1.sinks.k1.type = elasticsearch
+a1.sinks.k1.hostNames = 10.0.0.234:9300
+a1.sinks.k1.indexName = new_index
+a1.sinks.k1.indexType = new_type
+a1.sinks.k1.clusterName = elasticsearch
+#a1.sinks.k1.serializer = org.apache.flume.sink.elasticsearch.ElasticSearchDynamicSerializer 
+#a1.sinks.k1.client = rest 
+
+# Use a channel which buffers events in memory 
+a1.channels.c1.type = memory 
+a1.channels.c1.capacity = 100000 
+a1.channels.c1.transactionCapacity = 10000 
+
+# Bind the source and sink to the channel 
+a1.sources.r1.channels = c1 
+a1.sinks.k1.channel = c1

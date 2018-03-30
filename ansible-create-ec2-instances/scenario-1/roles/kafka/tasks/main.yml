@@ -1,0 +1,88 @@
+---
+
+- debug: var="{{ kafka_public_ip }}"
+#- name: check for kafka installation..
+#  become: yes
+#  stat:
+#    path: '{{kafka_install_dir}}'
+#  changed_when: false
+#  register: kafka_binary
+#- when: not kafka_binary.stat.exists
+#  block:
+#    - name: download kafka tgz...
+#      become: yes
+#      become_user: root
+#      get_url:
+#        url: '{{kafka_tgz_url}}'
+#        dest: /tmp/{{kafka_tgz}}
+#        mode: '0644'
+#        timeout: '{{kafka_download_timeout_seconds}}'
+#        checksum: '{{kafka_checksum}}'
+#    - name: 'ensure {{kafka_install_parent_dir}} exists'
+#      become: yes
+#      file:
+#        path: '{{kafka_install_parent_dir}}'
+#        state: directory
+#        owner: ec2-user
+#        mode: 0777
+#    - name: unarchive...
+#      become: yes
+#      become_user: root
+#      unarchive:
+#        remote_src: yes
+#        src: /tmp/{{kafka_tgz}}
+#        dest: '{{kafka_install_parent_dir}}'
+#        creates: '{{kafka_install_dir}}'
+#  always:
+#    - name: delete archive...
+#      become: yes
+#      become_user: root
+#      file:
+#        path: /tmp/{{kafka_tgz}}
+#        state: absent
+#
+#- name: link...
+#  become: yes
+#  become_user: root
+#  file:
+#    src: '{{kafka_install_dir}}'
+#    dest: '{{kafka_install_link_dir}}'
+#    state: link
+#    owner: ec2-user
+#    mode: 0777
+#
+#- name: change ownership recursively
+#  become: yes
+#  file:
+#    path: '{{kafka_install_dir}}'
+#    owner: ec2-user 
+#    group: ec2-user 
+#    mode: 0777  
+#
+#- name: include kafka in the default path
+#  become: yes
+#  become_user: root
+#  with_items:
+#    - d: /etc/profile.d
+#      f: kafka.sh
+#  template:
+#    src: '{{item.f}}.j2'
+#    dest: '{{item.d}}/{{item.f}}'
+#    mode: '{{item.m|default("0644")}}'
+#  
+#    
+#- name: Run zookeeper server in remote shell
+#  shell: nohup /usr/local/kafka/bin/zookeeper-server-start.sh /usr/local/kafka/config/zookeeper.properties </dev/null >/dev/null 2>&1 & 
+#
+#- name: Run kafka server in remote shell
+#  shell: nohup /usr/local/kafka/bin/kafka-server-start.sh /usr/local/kafka/config/server.properties </dev/null >/dev/null 2>&1 & 
+#
+#- name: Create topic named test
+#  shell: nohup /usr/local/kafka/bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic test </dev/null >/dev/null 2>&1 & 
+#
+#- name: List topic 
+#  shell: nohup /usr/local/kafka/bin/kafka-topics.sh --list --zookeeper localhost:2181 </dev/null >/dev/null 2>&1 & 
+#  register: output
+#
+#- debug: var=output
+#    

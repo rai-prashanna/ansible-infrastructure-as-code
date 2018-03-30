@@ -1,0 +1,47 @@
+---
+- name: create ec2 instances
+  hosts: localhost
+  vars:
+     ansible_ssh_private_key_file: "~/.ssh/interset-data-dev.pem"
+  roles:
+     - ec2
+
+#- name: gather facts from localhost 
+#  hosts: localhost
+#  become: yes
+#  gather_facts: False
+#  setup:
+#  delegate_to: "{{item}}"
+#  delegate_facts: True
+#  with_items: "{{groups['all']}}"
+
+#- hosts: localhost
+#  tasks:
+#    - name: gather facts from lh
+#      setup:
+#      delegate_to: "{{item}}"
+#      with_items: "{{groups['all']}}"
+#      when: item != "localhost"
+#
+#
+#- name: localfacts
+#  hosts: localhost
+#  roles:
+#     - localfacts
+
+
+#- name: flume in amazon node
+#  hosts: flume
+#  roles:
+#     - flume
+
+- name: kafka in amazon node
+  hosts: kafka
+  roles:
+     - kafka
+#
+#- name: flume in amazon node
+#  hosts: flume
+#  roles:
+#     - flume
+
